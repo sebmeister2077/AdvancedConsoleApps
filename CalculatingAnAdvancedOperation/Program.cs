@@ -34,7 +34,7 @@ namespace CalculatingAnAdvancedOperation
                                 str += c.ToString();
                             }
                         else
-                            if (c == 'i' || c == 'n' || c == 'o' || c == 's' || c == 't' || c == 'g')
+                            if (c == 'i' || c == 'n' || c == 'o' || c == 's' || c == 't' || c == 'g' || c == 'a' || c == 'b'||c=='q'||c=='r')
                                 str += c.ToString();
                             else
                             {
@@ -58,8 +58,8 @@ namespace CalculatingAnAdvancedOperation
                         termen == "*" || termen == "/" ||
                         termen == "^" || termen == "sin" ||
                         termen == "cos" || termen == "tan" ||
-                        termen == "log" || termen == "(" ||
-                        termen == ")")
+                        termen == "log" || termen == "(" || termen == "abs"||
+                        termen == "sqrt" | termen == ")")
                         operand = false;
                     else
                         operand = true;
@@ -68,10 +68,10 @@ namespace CalculatingAnAdvancedOperation
                     {
                     //se introduce in forma_poloneza
                     if (termen == "E")
-                        formaPoloneza.Append("E");
+                        formaPoloneza.Append(Math.E);
                         else
                             if (termen == "PI")
-                            formaPoloneza.Append("PI");
+                            formaPoloneza.Append(Math.PI);
                         else
                             formaPoloneza.Append(termen);
                         formaPoloneza.Append(" ");
@@ -88,8 +88,8 @@ namespace CalculatingAnAdvancedOperation
                         #region prioritate 1
                         if (termen == "*" && termen == "/" ||
                             termen == "^" || termen == "sin" ||
-                            termen == "cos" || termen == "tan" ||
-                            termen == "log")
+                            termen == "cos" || termen == "tan" || termen == "abs" ||
+                            termen == "log"||termen== "sqrt")
                             ;//nu fac nimic
                         #endregion
 
@@ -103,8 +103,8 @@ namespace CalculatingAnAdvancedOperation
                             while (functions.Count > 0 && (functions.Peek() == "*" ||
                                 functions.Peek() == "/" || functions.Peek() == "^" ||
                                 functions.Peek() == "sin" || functions.Peek() == "cos" ||
-                                functions.Peek() == "tan" || functions.Peek() == "ctg"|| 
-                                functions.Peek() == "log"))
+                                functions.Peek() == "tan" || termen== "sqrt"||
+                                functions.Peek() == "log" || termen == "abs"))
                                 formaPoloneza .Append(functions.Pop()).Append(" ");
                         //il reintroducem in stiva
                         functions.Push(termen);
@@ -142,13 +142,13 @@ namespace CalculatingAnAdvancedOperation
                         str == "*" || str == "/" ||
                         str == "^" || str == "sin" ||
                         str == "cos" || str == "tan" ||
-                        str == "log" || str == "ctg";
+                        str == "log" || str == "abs"|| str=="sqrt";
         }
         public static short TipDeOperatie(string str)
         {
             if (str == "+" || str == "-" ||str == "*" || str == "/" ||str == "^")
                 return 2;
-            if (str == "sin" ||str == "cos" || str == "tan" || str == "ctg")
+            if (str == "sin" ||str == "cos" || str == "tan" || str == "abs"||str=="sqrt")
                 return 1;
             return 0;//este numar
         }
@@ -171,9 +171,22 @@ namespace CalculatingAnAdvancedOperation
             }
             return double.NaN;
         }
-        public static double Calc(double nr1, string _operator)
+        public static double Calc(double nr, string _operator)
         {
-            return 0;
+            switch(_operator)
+            {
+                case "sin":
+                    return Math.Sin(nr);
+                case "cos":
+                    return Math.Cos(nr);
+                case "tan":
+                    return Math.Tan(nr);
+                case "abs":
+                    return Math.Abs(nr);
+                case "sqrt":
+                    return Math.Sqrt(nr);
+            }
+            return double.NaN;
         }
         public static double Calculeaza(string[] termeni)
         {
