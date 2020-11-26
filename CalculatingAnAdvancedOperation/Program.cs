@@ -8,6 +8,14 @@ namespace CalculatingAnAdvancedOperation
 {
     class Program
     {
+         // <summary>
+         //
+         //introduceti o expresie oarecare,de ex :(a+b)*c-sin(d-e)
+         //
+         //
+         //</summary>  
+
+
         static void Main(string[] args)
         {
             while (true)
