@@ -24,12 +24,15 @@ namespace CalculatingAnAdvancedOperation
                 string expression = Console.ReadLine();
                 string str="";
                 bool numar=true;
+                bool paranteza = false;
                 foreach (char c in expression)
                 {
                     if (str == "")
                     {
                         str += c.ToString();//primul element
                         numar = (c >= '0' && c <= '9')||c=='P'||c=='E';
+                        if(c=='(')
+                        { str += " ";paranteza = true; }
                     }
                     else
                         if (numar == true)
@@ -40,13 +43,20 @@ namespace CalculatingAnAdvancedOperation
                                 numar = false;
                                 str += " ";
                                 str += c.ToString();
+                                if (c == '(' || c == ')')
+                                { paranteza = true;str += " "; }
                             }
+                        else
+                        if(c=='('||c==')')
+                        { paranteza = true;str += " " + c.ToString() + " "; }
                         else
                             if (c == 'i' || c == 'n' || c == 'o' || c == 's' || c == 't' || c == 'g' || c == 'a' || c == 'b'||c=='q'||c=='r')
                                 str += c.ToString();
                             else
                             {
+                                if(paranteza==false)
                                 str += " ";
+                                paranteza = false;
                                 str += c.ToString();
                                 numar= (c >= '0' && c <= '9') || c == 'P' || c == 'E';
                             }
