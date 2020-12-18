@@ -77,7 +77,7 @@ namespace CalculatingAnAdvancedOperation
                         break;
                     //determin daca este operand sau operator
                     bool operand = false;
-                    if (termen == "+" || termen == "-" ||
+                    if (termen == "+" || termen == "-" || termen == "%" ||
                         termen == "*" || termen == "/" ||
                         termen == "^" || termen == "sin" ||
                         termen == "cos" || termen == "tan" ||
@@ -109,7 +109,7 @@ namespace CalculatingAnAdvancedOperation
                         functions.Push(termen);
 
                         #region prioritate 1
-                        if (termen == "*" && termen == "/" ||
+                        if (termen == "*" && termen == "/" || functions.Peek() == "%" ||
                             termen == "^" || termen == "sin" ||
                             termen == "cos" || termen == "tan" || termen == "abs" ||
                             termen == "log"||termen== "sqrt")
@@ -123,7 +123,7 @@ namespace CalculatingAnAdvancedOperation
                             functions.Pop();
                             //mutam in forma_poloneza toti
                             //operatorii de prioritate 1
-                            while (functions.Count > 0 && (functions.Peek() == "*" ||
+                            while (functions.Count > 0 && (functions.Peek() == "*" || functions.Peek() == "%" ||
                                 functions.Peek() == "/" || functions.Peek() == "^" ||
                                 functions.Peek() == "sin" || functions.Peek() == "cos" ||
                                 functions.Peek() == "tan" || termen== "sqrt"||
@@ -193,12 +193,14 @@ namespace CalculatingAnAdvancedOperation
                 if (i > 0)
                 {
                     if (operatie > 0)
+                    {
                         if (numbers.Contains(expr[i].ToString()) || functii.Contains(expr[i].ToString() + expr[i + 1].ToString() + expr[i + 2].ToString()))// dupa 3+ poate urma un numar sau o functie
                         { operatie--; numar = true; if (expr[i] == 'P') i++; }
-                        else
+                    }
+                    else
                         if (functie > 0)//dupa sin poate urma doar un numar ex sin(2+5)
-                            if (numbers.Contains(expr[i].ToString()))
-                            { functie--; numar = true; }
+                        if (numbers.Contains(expr[i].ToString()))
+                        { functie--; numar = true; }
 
                 }
                 else
@@ -230,7 +232,7 @@ namespace CalculatingAnAdvancedOperation
 
         private static bool IsOperator(string str)
         {
-            return str == "+" || str == "-" ||
+            return str == "+" || str == "-" || str == "%" ||
                         str == "*" || str == "/" ||
                         str == "^" || str == "sin" ||
                         str == "cos" || str == "tan" ||
@@ -238,7 +240,7 @@ namespace CalculatingAnAdvancedOperation
         }
         public static short TipDeOperatie(string str)
         {
-            if (str == "+" || str == "-" ||str == "*" || str == "/" ||str == "^")
+            if (str == "+" || str == "-" ||str == "*" || str == "/" ||str == "^"||str == "%" )
                 return 2;
             if (str == "sin" ||str == "cos" || str == "tan" || str == "abs"||str=="sqrt")
                 return 1;
@@ -260,8 +262,6 @@ namespace CalculatingAnAdvancedOperation
                     return nr1 % nr2;
                 case "^":
                     return Math.Pow(nr1,nr2);
-                case "log":
-                    return Math.Log(nr1,nr2);
             }
             return double.NaN;
         }
@@ -279,6 +279,8 @@ namespace CalculatingAnAdvancedOperation
                     return Math.Abs(nr);
                 case "sqrt":
                     return Math.Sqrt(nr);
+                case "log":
+                    return Math.Log(nr);
             }
             return double.NaN;
         }
