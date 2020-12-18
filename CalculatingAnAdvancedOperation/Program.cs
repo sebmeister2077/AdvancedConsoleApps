@@ -20,7 +20,6 @@ namespace CalculatingAnAdvancedOperation
         {
             while (true)
             {
-
                 string expression = Console.ReadLine();
                 if(!Verificare(expression))
                 { Console.WriteLine("Expresie Invalida.");System.Threading.Thread.Sleep(1000);continue; }
@@ -31,39 +30,39 @@ namespace CalculatingAnAdvancedOperation
                 
                 foreach (char c in expression)
                 {
-                    if (termeni[0]==null)
+                    if (termeni[0] == null)
                     {
                         termeni[0] += c.ToString();//primul element
-                        numar = (c >= '0' && c <= '9')||c=='P'||c=='E';
-                        if(c=='(')
-                        { index++;paranteza = true; }
+                        numar = (c >= '0' && c <= '9') || c == 'P' || c == 'E';
+                        if (c == '(')
+                        { index++; paranteza = true; }
                     }
                     else
                         if (numar == true)
-                            if ((c >= '0' && c <= '9') || c == 'I')
-                                termeni[index] += c.ToString();
-                            else
-                            {
-                                numar = false;
-                                index++;
-                                termeni[index] += c.ToString();
-                                if (c == '(' || c == ')')
-                                { paranteza = true;index++; }
-                            }
+                        if ((c >= '0' && c <= '9') || c == 'I')
+                            termeni[index] += c.ToString();
                         else
-                        if(c=='('||c==')')
-                        { paranteza = true;index++;termeni[index] += c.ToString(); index++; }
-                        else
-                            if (c == 'i' || c == 'n' || c == 'o' || c == 's' || c == 't' || c == 'g' || c == 'a' || c == 'b'||c=='q'||c=='r')
-                                termeni[index] += c.ToString();
-                            else
-                            {
-                                if(paranteza==false)
-                                index++;
-                                paranteza = false;
-                                termeni[index] += c.ToString();
-                                numar= (c >= '0' && c <= '9') || c == 'P' || c == 'E';
-                            }
+                        {
+                            numar = false;
+                            index++;
+                            termeni[index] += c.ToString();
+                            if (c == '(' || c == ')')
+                            { paranteza = true; index++; }
+                        }
+                    else
+                        if (c == '(' || c == ')')
+                    { if (!paranteza) index++; paranteza = true; termeni[index] += c.ToString(); index++; }
+                    else
+                            if (c == 'i' || c == 'n' || c == 'o' || c == 's' || c == 't' || c == 'g' || c == 'a' || c == 'b' || c == 'q' || c == 'r')
+                    { termeni[index] += c.ToString(); paranteza = false; }
+                    else
+                    {
+                        if (paranteza == false)
+                            index++;
+                        paranteza = false;
+                        termeni[index] += c.ToString();
+                        numar = (c >= '0' && c <= '9') || c == 'P' || c == 'E';
+                    }
                 }
                 
                 StringBuilder formaPoloneza = new StringBuilder();//forma poloneza
@@ -143,6 +142,7 @@ namespace CalculatingAnAdvancedOperation
                         functions.Pop();
                             while (functions.Count > 0 && functions.Peek() != "(")
                                 formaPoloneza.Append(functions.Pop()).Append(" ");
+                        if(functions.Count>0)
                         functions.Pop();
                         }
                         # endregion
@@ -162,15 +162,16 @@ namespace CalculatingAnAdvancedOperation
 
         private static bool Verificare(string expr)
         {
+            expr += "  ";
             int parandes=0, paraninchis = 0;
             string allcharac = "()sincostanlogsqrtabs+-*/%^0123456789.PIE";
             string numbers = "0123456789PIE";
             string operatii = "+-*/^%";
             string functii = "sincostanlogsqrtabs";
             bool numar = false;
-            int operatie = 0;
-            int functie = 0;
-            for(int i=0;i<expr.Length;i++)
+            bool operatie = false;
+            bool functie = false;
+            for(int i=0;i<expr.Length-2;i++)
             {
                 if (expr[i] == '(' || expr[i] == ')')
                 {
@@ -192,16 +193,26 @@ namespace CalculatingAnAdvancedOperation
                     return false;
                 if (i > 0)
                 {
-                    if (operatie > 0)
+                    if (operatie)
                     {
                         if (numbers.Contains(expr[i].ToString()) || functii.Contains(expr[i].ToString() + expr[i + 1].ToString() + expr[i + 2].ToString()))// dupa 3+ poate urma un numar sau o functie
-                        { operatie--; numar = true; if (expr[i] == 'P') i++; }
+                        { operatie=false; numar = true; if (expr[i] == 'P') i++; }
                     }
                     else
-                        if (functie > 0)//dupa sin poate urma doar un numar ex sin(2+5)
+                        if (functie)//dupa sin poate urma DOAR un numar ex sin(2+5)
                         if (numbers.Contains(expr[i].ToString()))
-                        { functie--; numar = true; }
-
+                        { functie=false; numar = true; }
+                    if (functii.Contains(expr[i].ToString() + expr[i+1].ToString() + expr[i+2].ToString()))
+                    {
+                        functie=true;
+                        if (expr[1] == 'q')
+                            i += 3;//skip these 4 charact
+                        else
+                            i += 2;//skip 3 charact (sin,cos,abs)
+                    }
+                    else
+                    if (operatii.Contains(expr[i]))
+                        operatie=true;
                 }
                 else
                 {
@@ -211,7 +222,7 @@ namespace CalculatingAnAdvancedOperation
                         return false;
                     if (functii.Contains(expr[0].ToString() + expr[1].ToString() + expr[2].ToString()))
                     {
-                        functie++;
+                        functie=true;
                         if (expr[1] == 'q')
                             i += 3;//skip these 4 charact
                         else
@@ -225,7 +236,7 @@ namespace CalculatingAnAdvancedOperation
             }
             if (parandes != paraninchis)
                 return false;
-            if (functie>0 || operatie>0)// ultima chestie gasita a fost o functie sau un operator fara numar
+            if (functie || operatie)// ultima chestie gasita a fost o functie sau un operator fara numar
                 return false;
             return true;
         }
