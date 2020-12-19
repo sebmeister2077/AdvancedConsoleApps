@@ -18,6 +18,7 @@ namespace CalculatingAnAdvancedOperation
 
         static void Main(string[] args)
         {
+            Console.WriteLine("introduceti o expresie oarecare, de ex:(12.51+4)*2-sin(PI/2-log(E))");
             while (true)
             {
                 string expression = Console.ReadLine();
@@ -39,7 +40,7 @@ namespace CalculatingAnAdvancedOperation
                     }
                     else
                         if (numar == true)
-                        if ((c >= '0' && c <= '9') || c == 'I')
+                        if ((c >= '0' && c <= '9') || c == 'I'||c=='.')
                             termeni[index] += c.ToString();
                         else
                         {
@@ -53,7 +54,7 @@ namespace CalculatingAnAdvancedOperation
                         if (c == '(' || c == ')')
                     { if (!paranteza) index++; paranteza = true; termeni[index] += c.ToString(); index++; }
                     else
-                            if (c == 'i' || c == 'n' || c == 'o' || c == 's' || c == 't' || c == 'g' || c == 'a' || c == 'b' || c == 'q' || c == 'r')
+                            if (c == 'i' || c == 'n' || c == 'o' || (c == 's'&&(termeni[index]=="ab"||termeni[index]=="co")) || c == 't' || c == 'g' || c == 'a' || c == 'b' || c == 'q' || c == 'r')
                     { termeni[index] += c.ToString(); paranteza = false; }
                     else
                     {
@@ -163,7 +164,7 @@ namespace CalculatingAnAdvancedOperation
         private static bool Verificare(string expr)
         {
             expr += "  ";
-            int parandes=0, paraninchis = 0;
+            int parandes=0, paraninchis = 0,para=0;
             string allcharac = "()sincostanlogsqrtabs+-*/%^0123456789.PIE";
             string numbers = "0123456789PIE";
             string operatii = "+-*/^%";
@@ -176,7 +177,10 @@ namespace CalculatingAnAdvancedOperation
                 if (expr[i] == '(' || expr[i] == ')')
                 {
                     if (expr[i] == '(')
-                        parandes++;
+                    { parandes++;
+                        if (i == 0 || i == 1)
+                            para++;
+                    }
                     if (expr[i] == ')')
                         paraninchis++;
                     if (paraninchis > parandes)
@@ -191,7 +195,7 @@ namespace CalculatingAnAdvancedOperation
                     return false;
                 if (i > 1 && expr[i - 1] == '.' && !numbers.Contains(expr[i].ToString()))//nu s-a pus nr dupa virgula
                     return false;
-                if (i > 0)
+                if (i > para)
                 {
                     if (operatie)
                     {
@@ -231,8 +235,6 @@ namespace CalculatingAnAdvancedOperation
                     else
                     { numar = true; if (expr[i] == 'P') i++; }
                 }
-                    
-
             }
             if (parandes != paraninchis)
                 return false;
