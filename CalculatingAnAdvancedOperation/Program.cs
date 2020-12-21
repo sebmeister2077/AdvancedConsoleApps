@@ -18,7 +18,9 @@ namespace CalculatingAnAdvancedOperation
 
         static void Main(string[] args)
         {
+            Console.WriteLine("Daca vreti sa folostiti nr negative puneti 0-numar");
             Console.WriteLine("introduceti o expresie oarecare, de ex:(12.51+4)*2-sin(PI/2-log(E))");
+
             while (true)
             {
                 string expression = Console.ReadLine();
