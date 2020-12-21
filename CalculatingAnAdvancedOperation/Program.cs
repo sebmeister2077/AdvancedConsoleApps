@@ -7,18 +7,11 @@ using System.Threading.Tasks;
 namespace CalculatingAnAdvancedOperation
 {
     class Program
-    {
-         // <summary>
-         //
-         //introduceti o expresie oarecare,de ex :(a+b)*c-sin(d-e)
-         //
-         //
-         //</summary>  
+    { 
 
 
         static void Main(string[] args)
         {
-            Console.WriteLine("Daca vreti sa folostiti nr negative puneti 0-numar");
             Console.WriteLine("introduceti o expresie oarecare, de ex:(12.51+4)*2-sin(PI/2-log(E))");
 
             while (true)
@@ -39,11 +32,15 @@ namespace CalculatingAnAdvancedOperation
                     {
                         termeni[0] += c.ToString();//primul element
                         numar = (c >= '0' && c <= '9') || c == 'P' || c == 'E';
+                        if (termeni[0] == "+")
+                            termeni[0] += "+";
+                        if(termeni[0] == "-")
+                            termeni[0] += "-";
                         if (c == '(')
                         { index++; paranteza = true; }
                     }
                     else
-                        if (numar == true)
+                      if (numar == true)
                         if ((c >= '0' && c <= '9') || c == 'I'||c=='.')
                             termeni[index] += c.ToString();
                         else
@@ -54,26 +51,32 @@ namespace CalculatingAnAdvancedOperation
                             if (c == '(' || c == ')')
                             { paranteza = true; index++; }
                         }
+                     else
+                    if(c=='-'||c=='+')// arata daca e pozitiv sau negativ
+                    {
+                        termeni[index] += c.ToString() + c.ToString();
+                        paranteza = false;
+                    }
                     else
                         if (c == '(' || c == ')')
-                    { if (!paranteza) index++; paranteza = true; termeni[index] += c.ToString(); index++; }
-                    else
+                        { if (!paranteza) index++; paranteza = true; termeni[index] += c.ToString(); index++; }
+                        else
                             if (c == 'i' || c == 'n' || c == 'o' || (c == 's'&&(termeni[index]=="ab"||termeni[index]=="co")) || c == 't' || c == 'g' || c == 'a' || c == 'b' || c == 'q' || c == 'r')
-                    { termeni[index] += c.ToString(); paranteza = false; }
-                    else
-                    {
-                        if (paranteza == false)
-                            index++;
-                        paranteza = false;
-                        termeni[index] += c.ToString();
-                        numar = (c >= '0' && c <= '9') || c == 'P' || c == 'E';
-                    }
+                            { termeni[index] += c.ToString(); paranteza = false; }
+                            else
+                            {
+                                if (paranteza == false)
+                                index++;
+                                paranteza = false;
+                                termeni[index] += c.ToString();
+                                numar = (c >= '0' && c <= '9') || c == 'P' || c == 'E';
+                            }
                 }
                 if(index==0)
                 { Console.WriteLine("Expresie Invalida."); System.Threading.Thread.Sleep(1000); continue; }
                 StringBuilder formaPoloneza = new StringBuilder();//forma poloneza
                 Stack<string> functions =new Stack<string>();//stiva pt. operatori/functii
-                #region Determa Forma Poloneza
+                #region Determina Forma Poloneza
                 
                 //despart forma normala in cuvinte
                 foreach (string termen in termeni)
@@ -82,7 +85,7 @@ namespace CalculatingAnAdvancedOperation
                         break;
                     //determin daca este operand sau operator
                     bool operand = false;
-                    if (termen == "+" || termen == "-" || termen == "%" ||
+                    if (termen == "+" || termen == "-" || termen == "%" || termen == "++" || termen == "--" ||
                         termen == "*" || termen == "/" ||
                         termen == "^" || termen == "sin" ||
                         termen == "cos" || termen == "tan" ||
@@ -114,7 +117,7 @@ namespace CalculatingAnAdvancedOperation
                         functions.Push(termen);
 
                         #region prioritate 1
-                        if (termen == "*" && termen == "/" || functions.Peek() == "%" ||
+                        if (termen == "*" && termen == "/" || termen == "%" || termen == "++" || termen == "--" ||
                             termen == "^" || termen == "sin" ||
                             termen == "cos" || termen == "tan" || termen == "abs" ||
                             termen == "log"||termen== "sqrt")
@@ -128,11 +131,11 @@ namespace CalculatingAnAdvancedOperation
                             functions.Pop();
                             //mutam in forma_poloneza toti
                             //operatorii de prioritate 1
-                            while (functions.Count > 0 && (functions.Peek() == "*" || functions.Peek() == "%" ||
+                            while (functions.Count > 0 && (functions.Peek() == "*" || functions.Peek() == "%" || functions.Peek() == "++" || functions.Peek() == "--" ||
                                 functions.Peek() == "/" || functions.Peek() == "^" ||
                                 functions.Peek() == "sin" || functions.Peek() == "cos" ||
-                                functions.Peek() == "tan" || termen== "sqrt"||
-                                functions.Peek() == "log" || termen == "abs"))
+                                functions.Peek() == "tan" || functions.Peek() == "sqrt"||
+                                functions.Peek() == "log" || functions.Peek() == "abs"))
                                 formaPoloneza .Append(functions.Pop()).Append(" ");
                         //il reintroducem in stiva
                         functions.Push(termen);
@@ -173,7 +176,7 @@ namespace CalculatingAnAdvancedOperation
             string allcharac = "()sincostanlogsqrtabs+-*/%^0123456789.PIE";
             string numbers = "0123456789PIE";
             string operatii = "+-*/^%";
-            string functii = "sincostanlogsqrtabs";
+            string functii = "sincostanlogsqrtabs-+";
             bool numar = false;
             bool operatie = false;
             bool functie = false;
@@ -181,6 +184,8 @@ namespace CalculatingAnAdvancedOperation
             {
                 if (expr[i] == ' ')
                     continue;
+                if (operatii.Contains(expr[i]) && operatii.Contains(expr[i + 1]))
+                    return false;
                 if (expr[i] == '(' || expr[i] == ')')
                 {
                     if (expr[i] == '(')
@@ -213,22 +218,23 @@ namespace CalculatingAnAdvancedOperation
                         if (functie)//dupa sin poate urma DOAR un numar ex sin(2+5)
                         if (numbers.Contains(expr[i].ToString()))
                         { functie=false; numar = true; }
-                    if (functii.Contains(expr[i].ToString() + expr[i+1].ToString() + expr[i+2].ToString()))
+                    if (functii.Contains(expr[i].ToString() + expr[i + 1].ToString() + expr[i + 2].ToString()))
                     {
-                        functie=true;
+                        functie = true;
                         if (expr[1] == 'q')
                             i += 3;//skip these 4 charact
                         else
                             i += 2;//skip 3 charact (sin,cos,abs)
                     }
                     else
+                    if (expr[i] == '-' || expr[i] == '+')
+                        functie = true;
+                    else
                     if (operatii.Contains(expr[i]))
-                        operatie=true;
+                        operatie = true;
                 }
                 else
                 {
-                    if (operatii.Contains(expr[0]))// + a - b e incorect 
-                        return false;
                     if (expr[0] == '.')
                         return false;
                     if (functii.Contains(expr[0].ToString() + expr[1].ToString() + expr[2].ToString()))
@@ -256,13 +262,13 @@ namespace CalculatingAnAdvancedOperation
                         str == "*" || str == "/" ||
                         str == "^" || str == "sin" ||
                         str == "cos" || str == "tan" ||
-                        str == "log" || str == "abs"|| str=="sqrt";
+                        str == "log" || str == "abs"|| str=="sqrt" || str == "++" || str == "--";
         }
         public static short TipDeOperatie(string str)
         {
             if (str == "+" || str == "-" ||str == "*" || str == "/" ||str == "^"||str == "%" )
                 return 2;
-            if (str == "sin" ||str == "cos" || str == "tan" || str == "abs"||str=="sqrt")
+            if (str == "sin" ||str == "cos" || str == "tan" || str == "abs"||str=="sqrt"||str == "++" || str == "--")
                 return 1;
             return 0;//este numar
         }
@@ -301,6 +307,10 @@ namespace CalculatingAnAdvancedOperation
                     return Math.Sqrt(nr);
                 case "log":
                     return Math.Log(nr);
+                case "--":
+                    return -nr;
+                case "++":
+                    return nr;
             }
             return double.NaN;
         }
