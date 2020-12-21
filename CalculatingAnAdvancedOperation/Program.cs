@@ -31,6 +31,8 @@ namespace CalculatingAnAdvancedOperation
                 
                 foreach (char c in expression)
                 {
+                    if (c == ' ')
+                        continue;
                     if (termeni[0] == null)
                     {
                         termeni[0] += c.ToString();//primul element
@@ -65,7 +67,8 @@ namespace CalculatingAnAdvancedOperation
                         numar = (c >= '0' && c <= '9') || c == 'P' || c == 'E';
                     }
                 }
-                
+                if(index==0)
+                { Console.WriteLine("Expresie Invalida."); System.Threading.Thread.Sleep(1000); continue; }
                 StringBuilder formaPoloneza = new StringBuilder();//forma poloneza
                 Stack<string> functions =new Stack<string>();//stiva pt. operatori/functii
                 #region Determa Forma Poloneza
@@ -174,6 +177,8 @@ namespace CalculatingAnAdvancedOperation
             bool functie = false;
             for(int i=0;i<expr.Length-2;i++)
             {
+                if (expr[i] == ' ')
+                    continue;
                 if (expr[i] == '(' || expr[i] == ')')
                 {
                     if (expr[i] == '(')
