@@ -8,18 +8,25 @@ namespace WebImageDownloader
     {
         static void Main(string[] args)
         {
-            //the characters you want to build a string with
-            char[] passChars = 
-            DownloadImages("https://prnt.sc/", "1008lu", "zzzzzz", passChars);
+            //the characters you want to build a code with
+            char[] passChars = GenerateWantedChars();
+            DownloadImages("https://prnt.sc/", "1008lu", "zzzzzz", passChars, );
         }
 
-        private static void DownloadImages(string downloadUrl, string startingValue, string endValue, char[] passChars)
+        private static void DownloadImages(string downloadUrl, string startingValue, string endValue, char[] passChars, uint? maxAmount)
         {
-            bool finish = false;
-            while (!finish)
+            uint imageCount = 0;
+            if(!maxAmount.HasValue)
+                maxAmount = uint.MaxValue;
+            ImageDownloader imgDownloader = new ImageDownloader();
+
+            while (imageCount < maxAmount)
             {
-                ImageDownloader imgDownloader = new ImageDownloader();
-                imgDownloader.DownloadImageFromUrl(downloadUrl + startingValue, @"D:\Images\");
+                bool downloadSuccess = imgDownloader.DownloadImageFromUrl(downloadUrl + startingValue, @"D:\Images\");
+
+                if (downloadSuccess)
+                    imageCount++;
+
 
                 if (startingValue == endValue)
                     break;
@@ -29,7 +36,7 @@ namespace WebImageDownloader
 
         static public char NextChar(char c, char[] passChars) => passChars[passChars.ToList().IndexOf(c) + 1];
 
-        static public string GoNext(string text,char[] passChars)
+        static public string GoNext(string text, char[] passChars)
         {
             char[] str = text.ToCharArray();
             int charsLen = passChars.Length;

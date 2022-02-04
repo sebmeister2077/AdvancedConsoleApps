@@ -10,7 +10,7 @@ namespace WebImageDownloader
 {
     public class ImageDownloader
     {
-        public void DownloadImageFromUrl(string url, string folderImagesPath, string logFilePath = "")
+        public bool DownloadImageFromUrl(string url, string folderImagesPath, string logFilePath = "")
         {
             var uri = new Uri(url);
             var pages = new List<HtmlNode> { LoadHtmlDocument(uri) };
@@ -21,13 +21,15 @@ namespace WebImageDownloader
             string data = pages[0].OuterHtml;
             bool noImageFound = !imgReg.IsMatch(data);
             if (noImageFound)
-                return;
+                return false;
 
             string imgurl = imgReg.Match(data).Value.Substring(5);
             DownloadImage(folderImagesPath, new Uri(imgurl), new WebClient());
 
             if (writeLogs)
                 WriteToLog(logFilePath, url.Substring(16), imgurl.Substring(20, 7));
+
+            return true;
         }
 
         private static void DownloadImage(string folderImagesPath, Uri url, WebClient webClient)
