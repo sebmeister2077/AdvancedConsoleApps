@@ -26,12 +26,13 @@ namespace FolderSizes
         }
         static void Main(string[] args)
         {
-            string folderDir = @"C:\Users";
+            string folderDir = @"C:\Users\Sebas";
             int minMbB = 900;
 
-            var r = GetBiggerFilesInDirectory(folderDir, minMbB);
-            int x = 0;
+            var res = GetBiggerFilesInDirectory(folderDir, minMbB);
         }
+
+        
 
         static public List<MyFile> GetBiggerFilesInDirectory(string directoryName, int minMB)
         {
@@ -53,20 +54,45 @@ namespace FolderSizes
 
                 if(dirQueue.Count > 0)
                 {
-                    DirectoryInfo dirInfo = dirQueue.Dequeue();
-                    DirectoryInfo[] newDirInfos = dirInfo.GetDirectories();
-                    FileInfo[] newFiles = dirInfo.GetFiles();
+                    try
+                    {
+                        
+                        DirectoryInfo dirInfo = dirQueue.Dequeue();
+                        DirectoryInfo[] newDirInfos = dirInfo.GetDirectories();
+                        FileInfo[] newFiles = dirInfo.GetFiles();
 
-                    foreach(var info in newDirInfos)
-                        dirQueue.Enqueue(info);
-                    foreach(var info in newFiles)
-                        fileQueue.Enqueue(info);
+                        foreach(var info in newDirInfos)
+                            dirQueue.Enqueue(info);
+                        foreach(var info in newFiles)
+                            fileQueue.Enqueue(info);
+
+                    }catch(Exception ex) { }
                 }
             }
 
             return files;
         }
-        
+
+        public bool IsUserAdministrator()
+        {
+            bool isAdmin;
+            try
+            {
+                WindowsIdentity user = WindowsIdentity.GetCurrent();
+                WindowsPrincipal principal = new WindowsPrincipal(user);
+                isAdmin = principal.IsInRole(WindowsBuiltInRole.Administrator);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                isAdmin = false;
+            }
+            catch (Exception ex)
+            {
+                isAdmin = false;
+            }
+            return isAdmin;
+        }
+
     }
     public static class Extensions
     {
