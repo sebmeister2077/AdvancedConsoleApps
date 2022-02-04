@@ -90,9 +90,9 @@ namespace WebImageDownloader
                 this.MaxAmount = MaxAmount;
             }
 
-            public ExtraOptions(uint MaxAmount, string LogsFile)
+            public ExtraOptions(uint MaxAmount, string LogsFilePath)
             {
-                this.LogsFilePath = LogsFile;
+                this.LogsFilePath = LogsFilePath;
                 this.MaxAmount = MaxAmount;
             }
 
