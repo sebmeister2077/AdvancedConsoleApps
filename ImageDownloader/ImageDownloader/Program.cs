@@ -10,19 +10,20 @@ namespace WebImageDownloader
         {
             //the characters you want to build a code with
             char[] passChars = GenerateWantedChars();
-            DownloadImages("https://prnt.sc/", "1008lu", "zzzzzz", passChars, );
+            DownloadImages("https://prnt.sc/", @"D:\Images\", "1008lu", "zzzzzz",passChars ,new ExtraOptions());
         }
 
-        private static void DownloadImages(string downloadUrl, string startingValue, string endValue, char[] passChars, uint? maxAmount)
+        /// <summary>
+        /// Downloads images from a url
+        /// </summary>
+        private static void DownloadImages(string downloadUrl, string savePath, string startingValue, string endValue, char[] passChars, ExtraOptions options)
         {
             uint imageCount = 0;
-            if(!maxAmount.HasValue)
-                maxAmount = uint.MaxValue;
             ImageDownloader imgDownloader = new ImageDownloader();
 
-            while (imageCount < maxAmount)
+            while (imageCount < options.MaxAmount)
             {
-                bool downloadSuccess = imgDownloader.DownloadImageFromUrl(downloadUrl + startingValue, @"D:\Images\");
+                bool downloadSuccess = imgDownloader.DownloadImageFromUrl(downloadUrl + startingValue, savePath);
 
                 if (downloadSuccess)
                     imageCount++;
@@ -65,6 +66,35 @@ namespace WebImageDownloader
         public static char[] GenerateWantedChars()
         {
             return CharGen.GenerateChars(CharSet.Numbers).CombineChars(CharGen.GenerateChars(CharSet.LettersLowerCase));
+        }
+
+        public class ExtraOptions
+        {
+            public uint MaxAmount { get; set; }
+
+            public string LogsFilePath { get; set; }
+
+            public ExtraOptions()
+            {
+                LogsFilePath = "";
+                MaxAmount = uint.MaxValue;
+            }
+
+            public ExtraOptions(string LogsFilePath) : this()
+            {
+                this.LogsFilePath = LogsFilePath;
+            }
+
+            public ExtraOptions(uint MaxAmount) : this()
+            {
+                this.MaxAmount = MaxAmount;
+            }
+
+            public ExtraOptions(uint MaxAmount, string LogsFile)
+            {
+                this.LogsFilePath = LogsFile;
+                this.MaxAmount = MaxAmount;
+            }
         }
 
     }

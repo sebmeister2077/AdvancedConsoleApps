@@ -10,11 +10,10 @@ namespace WebImageDownloader
 {
     public class ImageDownloader
     {
-        public bool DownloadImageFromUrl(string url, string folderImagesPath, string logFilePath = "")
+        public bool DownloadImageFromUrl(string url, string folderImagesPath, ImageDownloaderOptions options)
         {
             var uri = new Uri(url);
             var pages = new List<HtmlNode> { LoadHtmlDocument(uri) };
-            bool writeLogs = !string.IsNullOrEmpty(logFilePath);
 
             //pages.AddRange(LoadOtherPages(pages[0], url));    
             Regex imgReg = new Regex(@"src=\Dhttps:\/\/i\.imgur\.com\/[0-9a-zA-Z]{7}.[a-z]{3}");
@@ -26,8 +25,7 @@ namespace WebImageDownloader
             string imgurl = imgReg.Match(data).Value.Substring(5);
             DownloadImage(folderImagesPath, new Uri(imgurl), new WebClient());
 
-            if (writeLogs)
-                WriteToLog(logFilePath, url.Substring(16), imgurl.Substring(20, 7));
+            WriteToLog(options.LogFilePath, url.Substring(16), imgurl.Substring(20, 7));
 
             return true;
         }
@@ -46,9 +44,10 @@ namespace WebImageDownloader
 
         public static void WriteToLog(string logFilePath, string imageCode, string imageName)
         {
-            StreamWriter stw = new StreamWriter(logFilePath, true);
+            if (string.IsNullOrEmpty(logFilePath))
+                return;
+            using StreamWriter stw = new StreamWriter(logFilePath, true);
             stw.WriteLine(imageCode + ":" + imageName);
-            stw.Dispose();
         }
 
         private static int DiscoverTotalPages(HtmlNode documentNode)
@@ -71,6 +70,21 @@ namespace WebImageDownloader
 
             var documentNode = doc.DocumentNode;
             return documentNode;
+        }
+    }
+
+    public class ImageDownloaderOptions
+    {
+        public string LogFilePath { get; set; }
+
+        public ImageDownloaderOptions()
+        {
+            LogFilePath = "";
+        }
+
+        public ImageDownloaderOptions(string LogFilePath)
+        {
+            this.LogFilePath = LogFilePath;
         }
     }
 }
