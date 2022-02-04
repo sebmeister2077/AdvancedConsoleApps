@@ -6,11 +6,10 @@ namespace WebImageDownloader
 {
     static class Program
     {
-
         static void Main(string[] args)
         {
             //the characters you want to build a string with
-            char[] passChars = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' };
+            char[] passChars = 
             DownloadImages("https://prnt.sc/", "1008lu", "zzzzzz", passChars);
         }
 
@@ -54,6 +53,11 @@ namespace WebImageDownloader
                 x--;
             }
             return "";
+        }
+
+        public static char[] GenerateWantedChars()
+        {
+            return CharGen.GenerateChars(CharSet.Numbers).CombineChars(CharGen.GenerateChars(CharSet.LettersLowerCase));
         }
 
     }
