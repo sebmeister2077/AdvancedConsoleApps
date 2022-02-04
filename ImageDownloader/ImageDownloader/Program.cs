@@ -10,7 +10,7 @@ namespace WebImageDownloader
         {
             //the characters you want to build a code with
             char[] passChars = GenerateWantedChars();
-            DownloadImages("https://prnt.sc/", @"D:\Images\", "1008lu", "zzzzzz", passChars , new ExtraOptions());
+            DownloadImages("https://prnt.sc/", @"D:\Images\", "1008lu", "zzzzzz", passChars, new ExtraOptions());
         }
 
         /// <summary>
@@ -23,7 +23,7 @@ namespace WebImageDownloader
 
             while (imageCount < options.MaxAmount)
             {
-                bool downloadSuccess = imgDownloader.DownloadImageFromUrl(downloadUrl + startingValue, savePath,options.ToDownloaderOptions());
+                bool downloadSuccess = imgDownloader.DownloadImageFromUrl(downloadUrl + startingValue, savePath, options.ToDownloaderOptions());
 
                 if (downloadSuccess)
                     imageCount++;
