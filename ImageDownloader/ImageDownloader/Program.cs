@@ -1,36 +1,36 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Text;
 
 namespace WebImageDownloader
 {
     static class Program
     {
-        //the characters you want to build a string with
-        static char[] passChars = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' };
-
-        static bool finish = false;
-        static string downloadUrl = "https://prnt.sc/";
-        static string startingValue = "1008lu";
 
         static void Main(string[] args)
         {
+            //the characters you want to build a string with
+            char[] passChars = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' };
+            DownloadImages("https://prnt.sc/", "1008lu", "zzzzzz", passChars);
+        }
+
+        private static void DownloadImages(string downloadUrl, string startingValue, string endValue, char[] passChars)
+        {
+            bool finish = false;
             while (!finish)
             {
-                //Process.Start("chrome.exe", domain + value);
-                //Regex imgReg = new Regex(@"https:\/\/i\.imgur\.com\/[0-9a-zA-Z]{7}.[a-z]{3}");
-                //Console.WriteLine(imgReg.Match("https://i.imgur.com/djB6j0B.png").Success);
                 ImageDownloader imgDownloader = new ImageDownloader();
                 imgDownloader.DownloadImageFromUrl(downloadUrl + startingValue, @"D:\Images\");
-                //WebClient client = new WebClient();
-                //client.DownloadFile(domain + value, basePath+$"image{x}");
 
-                if (startingValue == "zzzzzz")
+                if (startingValue == endValue)
                     break;
-                startingValue = GoNext(startingValue);
+                startingValue = GoNext(startingValue, passChars);
             }
         }
-        static public char NextChar(char c) => passChars[passChars.ToList().IndexOf(c) + 1];
-        static public string GoNext(string text)
+
+        static public char NextChar(char c, char[] passChars) => passChars[passChars.ToList().IndexOf(c) + 1];
+
+        static public string GoNext(string text,char[] passChars)
         {
             char[] str = text.ToCharArray();
             int charsLen = passChars.Length;
@@ -46,7 +46,7 @@ namespace WebImageDownloader
             {
                 if (str[x] != passChars[charsLen - 1])
                 {
-                    str[x] = NextChar(str[x]);
+                    str[x] = NextChar(str[x], passChars);
                     return str.CharsToString();
                 }
                 else
@@ -55,6 +55,7 @@ namespace WebImageDownloader
             }
             return "";
         }
+
     }
     public static class StringExtension
     {

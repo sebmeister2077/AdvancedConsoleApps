@@ -10,7 +10,7 @@ namespace WebImageDownloader
 {
     public class ImageDownloader
     {
-        public void DownloadImageFromUrl(string url, string folderImagesPath, string? logFilePath)
+        public void DownloadImageFromUrl(string url, string folderImagesPath, string logFilePath = "")
         {
             var uri = new Uri(url);
             var pages = new List<HtmlNode> { LoadHtmlDocument(uri) };
