@@ -1,3 +1,3 @@
 # AdvancedConsoleApps
 
-Some more Advance CApps that are not ordinary programming exercises
+Some more Advanced CApps that are not ordinary programming exercises
