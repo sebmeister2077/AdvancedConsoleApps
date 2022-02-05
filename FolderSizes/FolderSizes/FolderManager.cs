@@ -61,6 +61,10 @@ namespace FolderManagerProj
 
         }
 
+        private void IterateThroughFoldersTree()
+        {
+            //use delegates as params for code reusability
+        }
     }
     public class MyFile
     {
