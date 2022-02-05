@@ -75,6 +75,8 @@ namespace FolderManagerProj
                 {
                     DirectoryInfo dirInfo = dirQueue.Dequeue();
                     directoryAction(dirInfo);
+                    if (!dirInfo.Exists)
+                        continue;
 
                     try
                     {
