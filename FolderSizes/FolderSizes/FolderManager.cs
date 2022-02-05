@@ -14,7 +14,7 @@ namespace FolderManagerProj
             List<MyFile> files = new List<MyFile>();
             Action<FileInfo> fileAction = (FileInfo file) =>
             {
-                uint size = file.Length.ToMB();
+                uint size = file.Length.ToByteSize();
                 if (size > minMB)
                     files.Add(new MyFile(size, file.Name, file.FullName));
             };
@@ -26,10 +26,10 @@ namespace FolderManagerProj
         }
 
         //returns true if all folders have been succesfully deleted, else false and outputs a list of failed deletes
-        public bool RemoveFilesAndFolders(string basePath, ByteSize maxSize)
-            => RemoveFilesAndFolders(basePath, maxSize, out List<string> dummy);
+        public bool RemoveFilesAndFolders(string basePath, ByteSize byteSize, Func<uint, uint, bool> condition)
+            => RemoveFilesAndFolders(basePath, byteSize, condition, out List<string> dummy);
 
-        public bool RemoveFilesAndFolders(string basePath, ByteSize byteSize, Predicate<bool> condition, out List<string> failedDeletes)
+        public bool RemoveFilesAndFolders(string basePath, ByteSize byteSize, Func<uint, uint, bool> condition, out List<string> failedDeletes)
         {
             List<MyFile> files = new List<MyFile>();
             Action<FileInfo> fileAction = (FileInfo file) =>
@@ -37,9 +37,13 @@ namespace FolderManagerProj
                 uint size = file.Length.ToByteSize(byteSize.Type);
                 if (condition(size, byteSize.Size))
                 {
-                    files.Add(new MyFile(,))
+                    files.Add(new MyFile(file));
                 }
             };
+            Action<DirectoryInfo> dirAction = (DirectoryInfo directoryInfo) => { };
+
+            IterateThroughFoldersTree(basePath, dirAction, fileAction, out failedDeletes);
+            return failedDeletes.Count > 0;
         }
 
         private void IterateThroughFoldersTree(string directoryName, Action<DirectoryInfo> directoryAction, Action<FileInfo> fileAction, out List<string> exceptionList)
