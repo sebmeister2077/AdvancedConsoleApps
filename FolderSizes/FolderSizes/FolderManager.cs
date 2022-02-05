@@ -29,12 +29,16 @@ namespace FolderManagerProj
         public bool RemoveFilesAndFolders(string basePath, ByteSize maxSize)
             => RemoveFilesAndFolders(basePath, maxSize, out List<string> dummy);
 
-        public bool RemoveFilesAndFolders(string basePath, ByteSize maxSize, out List<string> failedDeletes)
+        public bool RemoveFilesAndFolders(string basePath, ByteSize byteSize, Predicate<bool> condition, out List<string> failedDeletes)
         {
             List<MyFile> files = new List<MyFile>();
             Action<FileInfo> fileAction = (FileInfo file) =>
             {
-                uint size = file.Length.ToMB();
+                uint size = file.Length.ToByteSize(byteSize.Type);
+                if (condition(size, byteSize.Size))
+                {
+                    files.Add(new MyFile(,))
+                }
             };
         }
 
@@ -86,6 +90,13 @@ namespace FolderManagerProj
         public string FullPath { get; set; }
 
         public MyFile() { }
+
+        public MyFile(FileInfo file)
+        {
+            Name = file.Name;
+            FullPath = file.FullName;
+            SizeMB = file.Length.ToByteSize(SizeType.MegaByte);
+        }
 
         public MyFile(uint size, string name, string fullpath)
         {
