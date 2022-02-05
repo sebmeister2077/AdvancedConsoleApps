@@ -16,7 +16,7 @@ namespace WebImageDownloader
         /// <summary>
         /// Downloads images from a url
         /// </summary>
-        private static void DownloadImages(string downloadUrl, string savePath, string startingValue, string endValue, char[] passChars, ExtraOptions options)
+        public static void DownloadImages(string downloadUrl, string savePath, string startingValue, string endValue, char[] passChars, ExtraOptions options)
         {
             uint imageCount = 0;
             ImageDownloader imgDownloader = new ImageDownloader();
@@ -103,9 +103,9 @@ namespace WebImageDownloader
         }
 
     }
-    public static class StringExtension
+    internal static class StringExtension
     {
-        public static string CharsToString(this char[] chars)
+        internal static string CharsToString(this char[] chars)
         {
             StringBuilder bob = new StringBuilder();
             foreach (char c in chars)
