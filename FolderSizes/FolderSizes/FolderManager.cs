@@ -6,16 +6,16 @@ namespace FolderManagerProj
 {
     public class FolderManager
     {
-        public List<MyFile> GetBiggerFilesInDirectory(string directoryName, uint minMB)
-            => GetBiggerFilesInDirectory(directoryName, minMB, out List<string> dummyList);
+        public List<MyFile> GetBiggerFilesInDirectory(string directoryName, ByteSize byteSize)
+            => GetBiggerFilesInDirectory(directoryName, byteSize, out List<string> dummyList);
 
-        public List<MyFile> GetBiggerFilesInDirectory(string directoryName, uint minMB, out List<string> unauthorizedAccessFolders)
+        public List<MyFile> GetBiggerFilesInDirectory(string directoryName, ByteSize byteSize, out List<string> unauthorizedAccessFolders)
         {
             List<MyFile> files = new List<MyFile>();
             Action<FileInfo> fileAction = (FileInfo file) =>
             {
-                uint size = file.Length.ToByteSize();
-                if (size > minMB)
+                uint size = file.Length.ToByteSize(byteSize.Type);
+                if (size > byteSize.Size)
                     files.Add(new MyFile(size, file.Name, file.FullName));
             };
 
