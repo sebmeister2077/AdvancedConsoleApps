@@ -37,10 +37,20 @@ namespace FolderManagerProj
                 uint size = file.Length.ToByteSize(byteSize.Type);
                 if (condition(size, byteSize))
                 {
-                    files.Add(new MyFile(file));
+                    file.Delete();
                 }
             };
-            Action<DirectoryInfo> dirAction = (DirectoryInfo directoryInfo) => { };
+            Action<DirectoryInfo> dirAction = (DirectoryInfo directoryInfo) =>
+            {
+                try
+                {
+                    var dirs = directoryInfo.GetDirectories();
+                    var dirFiles = directoryInfo.GetFiles();
+                    if (dirs.Length == 0 && dirFiles.Length == 0)
+                        directoryInfo.Delete();
+                }
+                catch (Exception ex) { }//unauthorized
+            };
 
             IterateThroughFoldersTree(basePath, dirAction, fileAction, out failedDeletes);
             return failedDeletes.Count > 0;
