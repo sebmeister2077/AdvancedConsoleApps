@@ -47,13 +47,32 @@ namespace FolderManagerProj
                     var dirs = directoryInfo.GetDirectories();
                     var dirFiles = directoryInfo.GetFiles();
                     if (dirs.Length == 0 && dirFiles.Length == 0)
-                        directoryInfo.Delete();
+                    {
+                        var parent = directoryInfo.Parent;
+                        var current = directoryInfo;
+                        bool isEmptyDir = true;
+
+                        do
+                        {
+                            current.Delete();
+                            current = parent;
+                            parent = current.Parent;
+                            if (parent.FullName == new DirectoryInfo(basePath).FullName)
+                                parent = null;
+
+                            isEmptyDir = current.GetDirectories().Length == 0 && current.GetFiles().Length == 0;
+                        }
+                        while (parent != null && isEmptyDir);
+
+                        if (isEmptyDir)
+                            current.Delete();
+                    }
                 }
                 catch (Exception ex) { }//unauthorized
             };
 
             IterateThroughFoldersTree(basePath, dirAction, fileAction, out failedDeletes);
-            return failedDeletes.Count > 0;
+            return failedDeletes.Count == 0;
         }
 
         private void IterateThroughFoldersTree(string directoryName, Action<DirectoryInfo> directoryAction, Action<FileInfo> fileAction, out List<string> exceptionList)
