@@ -13,9 +13,9 @@ namespace FolderManagerProj
             string folderDir = @"C:\Users\Sebas";
             int minMbB = 900;
             var manager = new FolderManager();
-            var removalCondition = new Func<uint, uint, bool>((uint a, uint b) => a > b);
+            var removalCondition = new Func<uint, ByteSize, bool>((uint a, ByteSize b) => a < b.Size);
 
-            var res = manager.GetBiggerFilesInDirectory(folderDir, minMbB);
+            var res = manager.GetBiggerFilesInDirectory(folderDir, new ByteSize(100, SizeType.Byte));
         }
     }
 

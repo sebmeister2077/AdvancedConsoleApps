@@ -26,16 +26,16 @@ namespace FolderManagerProj
         }
 
         //returns true if all folders have been succesfully deleted, else false and outputs a list of failed deletes
-        public bool RemoveFilesAndFolders(string basePath, ByteSize byteSize, Func<uint, uint, bool> condition)
+        public bool RemoveFilesAndFolders(string basePath, ByteSize byteSize, Func<uint, ByteSize, bool> condition)
             => RemoveFilesAndFolders(basePath, byteSize, condition, out List<string> dummy);
 
-        public bool RemoveFilesAndFolders(string basePath, ByteSize byteSize, Func<uint, uint, bool> condition, out List<string> failedDeletes)
+        public bool RemoveFilesAndFolders(string basePath, ByteSize byteSize, Func<uint, ByteSize, bool> condition, out List<string> failedDeletes)
         {
             List<MyFile> files = new List<MyFile>();
             Action<FileInfo> fileAction = (FileInfo file) =>
             {
                 uint size = file.Length.ToByteSize(byteSize.Type);
-                if (condition(size, byteSize.Size))
+                if (condition(size, byteSize))
                 {
                     files.Add(new MyFile(file));
                 }
