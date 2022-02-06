@@ -11,11 +11,15 @@ namespace DataSaver
     {
         //if signature matches , the value/values before indicate how many bytes have been added manually, 255 meaning you have to check the byte before too and so on
         //signature is always at the end
-        protected byte[] signature = new byte[20] { 13, 25, 0, 19, 20, 18, 1, 14, 7, 5, 0, 19, 9, 7, 14, 1, 20, 21, 5, 0 };
-        protected int signatureLength = 20;
+        protected readonly byte[] signature = new byte[20] { 13, 25, 0, 19, 20, 18, 1, 14, 7, 5, 0, 19, 9, 7, 14, 1, 20, 21, 5, 0 };
+        protected readonly int signatureLength = 20;
 
         //the next 4 bytes will tell how many extra bytes have been added (2^(8+8+8+8) = enough)
-        protected int byteLengthData = 4;
+        protected readonly int byteLengthData = 4;
+
+        // improve performance
+        readonly long[] exponentsOfTwo = new long[] { 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144, 524288, 1048576, 2097152, 4194304, 8388608, 16777216, 33554432, 67108864, 134217728, 268435456, 536870912, 1073741824, 2147483648 };
+
         public FileStream CreateFile(string dirPath, string fileName, string extension)
         {
             DirectoryInfo dir = new DirectoryInfo(dirPath);
@@ -87,15 +91,30 @@ namespace DataSaver
 
         #region Helpers
 
-        private long CalculateLength(byte[] bytes)
+        public long CalculateLength(byte[] bytes)
         {
             if (bytes.Length != byteLengthData)
                 throw new InvalidOperationException($"Data is not valid. Input length should be {byteLengthData} but found to be {bytes.Length}");
 
-            return 1;
+            bool[] rawLength = CombineBytesLength(bytes);
+            long length = 0;
+
+            for (int i = 0; i < 32; i++)
+                if (rawLength[i])
+                    length += exponentsOfTwo[i];
+
+            return length;
         }
 
+        private bool[] CombineBytesLength(byte[] bytes)
+        {
+            List<bool> length = new List<bool>();
 
+            for (int i = 0; i < bytes.Length; i++)
+                length.AddRange(bytes[i].ToBits());
+
+            return length.ToArray();
+        }
 
         private bool IsSignature(byte[] givenSignature)
         {
@@ -114,8 +133,7 @@ namespace DataSaver
     }
     public static class Extensions
     {
-
-        public static bool[] ToBit(this byte givenByte)
+        public static bool[] ToBits(this byte givenByte)
         {
             bool[] result = new bool[8];
 

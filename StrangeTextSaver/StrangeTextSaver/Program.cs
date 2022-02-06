@@ -32,8 +32,9 @@ namespace DataSaver
             byte[] myBytes = new byte[2];
             streamReadAgain.Read(myBytes, 0, 2);
             int x = 0;*/
-            byte b = 9;
-            var c = b.ToBit();
+            byte[] bytes = new byte[4] { 0, 0, 1, 255 };
+            StrangeDataSaver strangeDataSaver = new StrangeDataSaver();
+            var r = strangeDataSaver.CalculateLength(bytes);
             int d = 0;
         }
     }
