@@ -47,7 +47,8 @@ namespace DataSaver
             long fileLength = file.Length;
             long previousDataLength = GetWrittenByteLength(file);
             writer.Position = fileLength;
-            if (HasSignature(file))
+            bool hasSignature = HasSignature(file);
+            if (hasSignature)
                 writer.Position -= (signatureLength + byteLengthData);
 
             long dataLength = data.Length;
@@ -64,7 +65,10 @@ namespace DataSaver
             buffer = data.Skip(skipCount * int.MaxValue).Take((int)dataLength).ToArray();
             writer.Write(buffer, 0, (int)dataLength);
 
+            if (!hasSignature)
+            {
 
+            }
         }
 
         private void AddSignature(FileInfo file)
@@ -235,6 +239,38 @@ namespace DataSaver
             }
 
             return result;
+        }
+
+        public static byte ToByte(this bool[] bits)
+        {
+            byte result = 0;
+            for (int i = 7; i >= 0; i--)
+                if (bits[i])
+                    result += (byte)Math.Pow(2, 7 - i);
+
+            return result;
+        }
+
+        public static byte[] ConvertToBytes(this long number)
+        {
+            byte[] bytes = new byte[4];
+            bool[] bits = new bool[32];
+
+            for (int i = 31; i >= 0; i--)
+            {
+                if (number != 0)
+                {
+                    bits[i] = number % 2 == 1;
+                    number /= 2;
+                    continue;
+                }
+                bits[i] = false;
+            }
+
+            for (int i = 3; i >= 0; i--)
+                bytes[i] = bits.Skip(i * 8).Take(8).ToArray().ToByte();
+
+            return bytes;
         }
     }
 
