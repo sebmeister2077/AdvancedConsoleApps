@@ -15,7 +15,7 @@ namespace DataSaver
         protected readonly int signatureLength = 20;
 
         //the next 4 bytes will tell how many extra bytes have been added (2^(8+8+8+8) = enough)
-        protected readonly int byteLengthData = 4;
+        protected const int byteLengthData = 4;
 
         // improve performance
         readonly long[] exponentsOfTwo = new long[] { 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144, 524288, 1048576, 2097152, 4194304, 8388608, 16777216, 33554432, 67108864, 134217728, 268435456, 536870912, 1073741824, 2147483648 };
@@ -44,21 +44,43 @@ namespace DataSaver
             //fs.Write(data, 0, data.Length);
         }
 
+        /// <summary>
+        /// Returns the hidden data
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
+        /// <exception cref="InvalidDataException"></exception>
         public byte[] GetWrittenBytes(FileInfo file)
         {
             if (!HasSignature(file))
                 return null;
 
-            using FileStream reader = file.OpenRead();
-            byte[] fileSignature = new byte[20];
-            long fileLength = reader.Length;
-            long readPosition = fileLength - signatureLength;
-            reader.Position = readPosition;
-            reader.Read(fileSignature, 0, signatureLength);
+            long totalWrittenBytes = GetWrittenByteLength(file);
 
-            return fileSignature;
+            using FileStream reader = file.OpenRead();
+            byte[] data = new byte[totalWrittenBytes];
+            long fileLength = reader.Length;
+            long readPosition = fileLength - signatureLength - byteLengthData;
+            if (totalWrittenBytes < readPosition)
+                throw new InvalidDataException("File data written overpasses the file size");
+            readPosition -= totalWrittenBytes;
+
+            reader.Position = readPosition;
+            while (totalWrittenBytes > int.MaxValue)
+            {
+                reader.Read(data, 0, int.MaxValue);
+                totalWrittenBytes -= int.MaxValue;
+            }
+            reader.Read(data, 0, (int)totalWrittenBytes);
+
+            return data;
         }
 
+        /// <summary>
+        /// Returns the length of the hidden data, -1 if file has no signature
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
         public long GetWrittenByteLength(FileInfo file)
         {
             if (!HasSignature(file))
@@ -71,9 +93,14 @@ namespace DataSaver
             reader.Position = readPosition;
             reader.Read(dataLength, 0, signatureLength);
 
-            return 0;
+            return CalculateLength(dataLength);
         }
 
+        /// <summary>
+        /// Returns true if the file has been written to
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
         public bool HasSignature(FileInfo file)
         {
             if (file == null || !file.Exists)
@@ -91,7 +118,7 @@ namespace DataSaver
 
         #region Helpers
 
-        public long CalculateLength(byte[] bytes)
+        private long CalculateLength(byte[] bytes)
         {
             if (bytes.Length != byteLengthData)
                 throw new InvalidOperationException($"Data is not valid. Input length should be {byteLengthData} but found to be {bytes.Length}");
@@ -106,7 +133,7 @@ namespace DataSaver
             return length;
         }
 
-        private bool[] CombineBytesLength(byte[] bytes)
+        private bool[] CombineBytesLength(params byte[] bytes)
         {
             List<bool> length = new List<bool>();
 
@@ -133,6 +160,11 @@ namespace DataSaver
     }
     public static class Extensions
     {
+        /// <summary>
+        /// Converts a byte to its corresponding bits
+        /// </summary>
+        /// <param name="givenByte"></param>
+        /// <returns></returns>
         public static bool[] ToBits(this byte givenByte)
         {
             bool[] result = new bool[8];

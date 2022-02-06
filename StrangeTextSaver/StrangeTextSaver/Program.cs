@@ -34,7 +34,7 @@ namespace DataSaver
             int x = 0;*/
             byte[] bytes = new byte[4] { 0, 0, 1, 255 };
             StrangeDataSaver strangeDataSaver = new StrangeDataSaver();
-            var r = strangeDataSaver.CalculateLength(bytes);
+            var r = strangeDataSaver.
             int d = 0;
         }
     }
