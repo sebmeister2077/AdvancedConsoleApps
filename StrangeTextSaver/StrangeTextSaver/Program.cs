@@ -10,31 +10,25 @@ namespace DataSaver
         static void Main(string[] args)
         {
             string dirPath = @"D:/test";
-            var saver = new StrangeDataSaver();
 
-            string filepath = $"{dirPath}/{"test"}.{"txt"}";
+            string filepath = $"{dirPath}/{"test"}.{"png"}";
             string filepath2 = $"{dirPath}/{"download"}.{"png"}";
-            /*
-            FileInfo file = new FileInfo(filepath);
-            using FileStream streamWrite = file.OpenWrite();
-            FileInfo file2 = new FileInfo(filepath2);
-            using FileStream streamRead = file2.OpenRead();
-            var length = streamRead.Length;
-            byte[] readbuffer = new byte[length];
-            streamRead.Read(readbuffer, 0, (int)length);
 
-            //byte[] pngChunk = new byte[8] { 137, 80, 78, 71, 13, 10, 26, 10 };
-            //var r = streamRead.Read(buffer, 0, 1024);
-            streamWrite.Write(readbuffer, 0, (int)length);
-            streamWrite.Write(new byte[2] { 140, 120 }, 0, 2);
-            streamWrite.Dispose();
-            using FileStream streamReadAgain = file.OpenRead();
-            streamReadAgain.Read(new byte[length], 0, (int)length);
-            byte[] myBytes = new byte[2];
-            streamReadAgain.Read(myBytes, 0, 2);
-            int x = 0;*/
-            FileInfo file = new FileInfo(filepath);
-            using FileStream streamWrite = file.OpenWrite();
+            //File.Create(filepath).Close();
+            StrangeDataSaver saver = new StrangeDataSaver();
+            byte[] dat = new byte[10000];
+            dat.Initialize();
+
+            for (int i = 0; i < 50; i++)
+            {
+                saver.AppendBytesToFile(filepath, dat);
+            }
+
+            var info = new FileInfo(filepath);
+            FileStream fs = info.OpenRead();
+            byte[] data = new byte[fs.Length];
+            fs.Read(data, 0, data.Length);
+            //var r = saver.GetWrittenBytes(filepath);
             int d = 0;
         }
     }
