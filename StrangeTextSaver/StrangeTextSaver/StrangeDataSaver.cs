@@ -74,11 +74,12 @@ namespace DataSaver
         private void AddSignature(FileInfo file)
         {
             using FileStream writer = file.OpenWrite();
-            long fileLength = file.Length;
-            //byte[] emptyBytes = new byte[4] { 0, 0, 0, 0 };
+            AddSignature(writer);
+        }
 
-            writer.Position = fileLength;
-            //writer.Write(emptyBytes, 0, byteLengthData);
+        private void AddSignature(FileStream writer)
+        {
+            writer.Seek(0, SeekOrigin.End);
             writer.Write(signature, 0, signatureLength);
         }
         #endregion
@@ -213,6 +214,11 @@ namespace DataSaver
                     return false;
 
             return true;
+        }
+
+        private byte[] AddBytes(byte[] a, byte[] b)
+        {
+            return a;//TODO
         }
 
     }
