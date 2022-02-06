@@ -33,17 +33,32 @@ namespace DataSaver
             return File.Create($"{dirPath}/{fileName}.{extension}");
         }
 
-        public void AppendTestToStream(FileStream fs, string text)
+        #region Writes
+        /*public void AppendTestToStream(FileStream fs, string text)
         {
             byte[] info = new UTF8Encoding(true).GetBytes(text);
-        }
+        }*/
         public void AppendBytesToFile(FileInfo file, byte[] data)
         {
+            if (!file.Exists)
+                return;
 
             using FileStream stream = file.OpenWrite();
             //fs.Write(data, 0, data.Length);
         }
 
+        private FileStream AddSignature(FileInfo file)
+        {
+            using FileStream writer = file.OpenWrite();
+            long fileLength = file.Length;
+            writer.Position = fileLength;
+
+            writer.Write(signature, 0, signatureLength);
+            return writer;
+        }
+        #endregion
+
+        #region Reads
         /// <summary>
         /// Returns the hidden data
         /// </summary>
@@ -95,6 +110,7 @@ namespace DataSaver
 
             return CalculateLength(dataLength);
         }
+        #endregion
 
         /// <summary>
         /// Returns true if the file has been written to

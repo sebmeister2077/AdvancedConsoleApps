@@ -12,9 +12,10 @@ namespace DataSaver
             string dirPath = @"D:/test";
             var saver = new StrangeDataSaver();
 
-            string filepath = $"{dirPath}/{"test"}.{"png"}";
+            string filepath = $"{dirPath}/{"test"}.{"txt"}";
             string filepath2 = $"{dirPath}/{"download"}.{"png"}";
-            /*FileInfo file = new FileInfo(filepath);
+            /*
+            FileInfo file = new FileInfo(filepath);
             using FileStream streamWrite = file.OpenWrite();
             FileInfo file2 = new FileInfo(filepath2);
             using FileStream streamRead = file2.OpenRead();
@@ -32,9 +33,8 @@ namespace DataSaver
             byte[] myBytes = new byte[2];
             streamReadAgain.Read(myBytes, 0, 2);
             int x = 0;*/
-            byte[] bytes = new byte[4] { 0, 0, 1, 255 };
-            StrangeDataSaver strangeDataSaver = new StrangeDataSaver();
-            var r = strangeDataSaver.
+            FileInfo file = new FileInfo(filepath);
+            using FileStream streamWrite = file.OpenWrite();
             int d = 0;
         }
     }
