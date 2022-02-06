@@ -12,9 +12,10 @@ namespace DataSaver
         //if signature matches , the value/values before indicate how many bytes have been added manually, 255 meaning you have to check the byte before too and so on
         //signature is always at the end
         protected byte[] signature = new byte[20] { 13, 25, 0, 19, 20, 18, 1, 14, 7, 5, 0, 19, 9, 7, 14, 1, 20, 21, 5, 0 };
-        int signatureLength = 20;
+        protected int signatureLength = 20;
 
         //the next 4 bytes will tell how many extra bytes have been added (2^(8+8+8+8) = enough)
+        protected int byteLengthData = 4;
         public FileStream CreateFile(string dirPath, string fileName, string extension)
         {
             DirectoryInfo dir = new DirectoryInfo(dirPath);
@@ -23,7 +24,7 @@ namespace DataSaver
 
             FileInfo file = new FileInfo($"{dirPath}/{fileName}.{extension}");
             if (file.Exists)
-                throw new InvalidOperationException();
+                throw new InvalidOperationException("Cant create an existing file");
 
             return File.Create($"{dirPath}/{fileName}.{extension}");
         }
@@ -84,6 +85,18 @@ namespace DataSaver
             return IsSignature(fileSignature);
         }
 
+        #region Helpers
+
+        private long CalculateLength(byte[] bytes)
+        {
+            if (bytes.Length != byteLengthData)
+                throw new InvalidOperationException($"Data is not valid. Input length should be {byteLengthData} but found to be {bytes.Length}");
+
+            return 1;
+        }
+
+
+
         private bool IsSignature(byte[] givenSignature)
         {
             if (givenSignature == null)
@@ -97,5 +110,29 @@ namespace DataSaver
 
             return true;
         }
+
     }
+    public static class Extensions
+    {
+
+        public static bool[] ToBit(this byte givenByte)
+        {
+            bool[] result = new bool[8];
+
+            for (int i = 7; i >= 0; i--)
+            {
+                if (givenByte != 0)
+                {
+                    result[i] = (givenByte % 2 == 1);
+                    givenByte /= 2;
+                    continue;
+                }
+                result[i] = false;
+            }
+
+            return result;
+        }
+    }
+
+    #endregion
 }

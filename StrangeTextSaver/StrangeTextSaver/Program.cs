@@ -32,8 +32,9 @@ namespace DataSaver
             byte[] myBytes = new byte[2];
             streamReadAgain.Read(myBytes, 0, 2);
             int x = 0;*/
-            byte[] signature1 = new byte[20] { 13, 25, 0, 19, 20, 18, 1, 14, 7, 5, 0, 19, 9, 7, 14, 1, 20, 21, 5, 0 };
-            byte[] signature2 = new byte[20] { 13, 25, 0, 19, 20, 18, 1, 14, 7, 5, 0, 19, 9, 7, 14, 1, 20, 21, 5, 0 };
+            byte b = 9;
+            var c = b.ToBit();
+            int d = 0;
         }
     }
 
