@@ -41,20 +41,41 @@ namespace DataSaver
         public void AppendBytesToFile(FileInfo file, byte[] data)
         {
             if (!file.Exists)
-                return;
+                throw new FileNotFoundException();
 
-            using FileStream stream = file.OpenWrite();
-            //fs.Write(data, 0, data.Length);
+            using FileStream writer = file.OpenWrite();
+            long fileLength = file.Length;
+            long previousDataLength = GetWrittenByteLength(file);
+            writer.Position = fileLength;
+            if (HasSignature(file))
+                writer.Position -= (signatureLength + byteLengthData);
+
+            long dataLength = data.Length;
+            int skipCount = 0;
+            byte[] buffer;
+
+            while (dataLength > int.MaxValue)
+            {
+                buffer = data.Skip(skipCount * int.MaxValue).Take(int.MaxValue).ToArray();
+                writer.Write(buffer, 0, int.MaxValue);
+                skipCount++;
+                dataLength -= int.MaxValue;
+            }
+            buffer = data.Skip(skipCount * int.MaxValue).Take((int)dataLength).ToArray();
+            writer.Write(buffer, 0, (int)dataLength);
+
+
         }
 
-        private FileStream AddSignature(FileInfo file)
+        private void AddSignature(FileInfo file)
         {
             using FileStream writer = file.OpenWrite();
             long fileLength = file.Length;
-            writer.Position = fileLength;
+            //byte[] emptyBytes = new byte[4] { 0, 0, 0, 0 };
 
+            writer.Position = fileLength;
+            //writer.Write(emptyBytes, 0, byteLengthData);
             writer.Write(signature, 0, signatureLength);
-            return writer;
         }
         #endregion
 
@@ -102,6 +123,15 @@ namespace DataSaver
                 return -1;
 
             using FileStream reader = file.OpenRead();
+
+            return GetWrittenByteLength(reader);
+        }
+
+        public long GetWrittenByteLength(FileStream reader)
+        {
+            if (!reader.CanRead || !HasSignature(reader))
+                return -1;
+
             long fileLength = reader.Length;
             byte[] dataLength = new byte[4];
             long readPosition = fileLength - signatureLength - 1;
@@ -123,6 +153,15 @@ namespace DataSaver
                 return false;
 
             using FileStream reader = file.OpenRead();
+            return HasSignature(reader);
+        }
+
+
+        public bool HasSignature(FileStream reader)
+        {
+            if (!reader.CanRead)
+                return false;
+
             byte[] fileSignature = new byte[20];
             long fileLength = reader.Length;
             long readPosition = fileLength - signatureLength;
@@ -131,7 +170,6 @@ namespace DataSaver
 
             return IsSignature(fileSignature);
         }
-
         #region Helpers
 
         private long CalculateLength(byte[] bytes)
