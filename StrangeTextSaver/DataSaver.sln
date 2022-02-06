@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StrangeTextSaver", "StrangeTextSaver\StrangeTextSaver.csproj", "{342C9C16-05CF-4A3B-9C15-C42E0AB63358}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataSaver", "StrangeTextSaver\DataSaver.csproj", "{342C9C16-05CF-4A3B-9C15-C42E0AB63358}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
