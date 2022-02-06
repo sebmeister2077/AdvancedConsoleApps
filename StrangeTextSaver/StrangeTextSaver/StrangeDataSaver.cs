@@ -10,9 +10,11 @@ namespace DataSaver
     public class StrangeDataSaver
     {
         //if signature matches , the value/values before indicate how many bytes have been added manually, 255 meaning you have to check the byte before too and so on
+        //signature is always at the end
         protected byte[] signature = new byte[20] { 13, 25, 0, 19, 20, 18, 1, 14, 7, 5, 0, 19, 9, 7, 14, 1, 20, 21, 5, 0 };
         int signatureLength = 20;
 
+        //the next 4 bytes will tell how many extra bytes have been added (2^(8+8+8+8) = enough)
         public FileStream CreateFile(string dirPath, string fileName, string extension)
         {
             DirectoryInfo dir = new DirectoryInfo(dirPath);
@@ -39,6 +41,9 @@ namespace DataSaver
 
         public byte[] GetWrittenBytes(FileInfo file)
         {
+            if (!HasSignature(file))
+                return null;
+
             using FileStream reader = file.OpenRead();
             byte[] fileSignature = new byte[20];
             long fileLength = reader.Length;
@@ -46,21 +51,22 @@ namespace DataSaver
             reader.Position = readPosition;
             reader.Read(fileSignature, 0, signatureLength);
 
-            if (IsSignature(fileSignature))
+            return fileSignature;
         }
 
         public long GetWrittenByteLength(FileInfo file)
         {
             if (!HasSignature(file))
-                return 0;
+                return -1;
 
             using FileStream reader = file.OpenRead();
-            byte[] fileSignature = new byte[20];
             long fileLength = reader.Length;
-            long readPosition = fileLength - signatureLength;
+            byte[] dataLength = new byte[4];
+            long readPosition = fileLength - signatureLength - 1;
             reader.Position = readPosition;
-            reader.Read(fileSignature, 0, signatureLength);
+            reader.Read(dataLength, 0, signatureLength);
 
+            return 0;
         }
 
         public bool HasSignature(FileInfo file)
