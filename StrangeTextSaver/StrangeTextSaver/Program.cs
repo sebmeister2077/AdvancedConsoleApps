@@ -15,11 +15,6 @@ namespace DataSaver
             byte[] dat = new byte[1000000];
             dat.Initialize();
 
-            for (int i = 0; i < 50; i++)
-            {
-                saver.AppendBytesToFile(filepath, dat);
-                saver.AppendBytesToFile(,)
-            }
 
             var info = new FileInfo(filepath);
             FileStream fs = info.OpenRead();

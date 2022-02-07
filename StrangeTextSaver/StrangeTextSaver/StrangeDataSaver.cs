@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 
 namespace DataSaver
 {
+
+    /// <summary>
+    /// You can add hidden data inside .png, .jpg  files
+    /// </summary>
     public class StrangeDataSaver
     {
         //signature represents a file that has been written to with extra data
