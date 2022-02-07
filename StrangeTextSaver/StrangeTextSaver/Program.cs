@@ -9,21 +9,16 @@ namespace DataSaver
         //save text in a png/jpeg or other types of files
         static void Main(string[] args)
         {
-            double x = double.MaxValue;
-            int s = (int)x;
-            string dirPath = @"D:/test";
+            string filepath = $"D:/test/{"testpng"}.{"png"}";
 
-            string filepath = $"{dirPath}/{"test"}.{"png"}";
-            string filepath2 = $"{dirPath}/{"download"}.{"png"}";
-
-            //File.Create(filepath).Close();
             StrangeDataSaver saver = new StrangeDataSaver();
-            byte[] dat = new byte[10000];
+            byte[] dat = new byte[1000000];
             dat.Initialize();
 
             for (int i = 0; i < 50; i++)
             {
                 saver.AppendBytesToFile(filepath, dat);
+                saver.AppendBytesToFile(,)
             }
 
             var info = new FileInfo(filepath);

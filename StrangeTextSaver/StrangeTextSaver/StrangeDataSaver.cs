@@ -29,8 +29,12 @@ namespace DataSaver
 
         #region Writes
 
-
-
+        /// <summary>
+        /// Appends bytes to a given file, adds signature and byte length at the end.
+        /// If signature was found, the byte lengths get added together
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <param name="data"></param>
         public void AppendBytesToFile(string filePath, byte[] data) => AppendBytesToFile(new FileInfo(filePath), data);
 
         public void AppendBytesToFile(FileInfo file, byte[] data)
@@ -75,7 +79,7 @@ namespace DataSaver
 
         #region Reads
         /// <summary>
-        /// Returns the hidden data
+        /// Returns the hidden data inside the file if it has a signature
         /// </summary>
         /// <param name="file"></param>
         /// <returns></returns>
@@ -85,12 +89,12 @@ namespace DataSaver
             if (!HasSignature(file))
                 return null;
 
-
             using FileStream reader = file.OpenRead();
             long totalWrittenBytes = GetWrittenByteLength(reader);
             byte[] data = new byte[totalWrittenBytes];
             long fileLength = reader.Length;
             long readPosition = fileLength - signatureLength - byteLengthData;
+
             if (totalWrittenBytes < readPosition)
                 throw new InvalidDataException("File data written overpasses the file size");
             readPosition -= totalWrittenBytes;
@@ -105,6 +109,13 @@ namespace DataSaver
 
             return data;
         }
+
+        /// <summary>
+        /// Returns the hidden data inside the file if it has a signature
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
+        /// <exception cref="InvalidDataException"></exception>
         public byte[] GetWrittenBytes(string filePath) => GetWrittenBytes(new FileInfo(filePath));
 
         /// <summary>
@@ -138,7 +149,7 @@ namespace DataSaver
         #endregion
 
         /// <summary>
-        /// Returns true if the file has been written to
+        /// Returns true if the file has the corresponding signature
         /// </summary>
         /// <param name="file"></param>
         /// <returns></returns>
