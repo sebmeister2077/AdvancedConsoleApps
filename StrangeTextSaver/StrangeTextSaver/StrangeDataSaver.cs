@@ -9,33 +9,27 @@ namespace DataSaver
 {
     public class StrangeDataSaver
     {
-        //if signature matches , the value/values before indicate how many bytes have been added manually, 255 meaning you have to check the byte before too and so on
+        //signature represents a file that has been written to with extra data
         //signature is always at the end
-        protected readonly byte[] signature = new byte[20] { 13, 25, 0, 19, 20, 18, 1, 14, 7, 5, 0, 19, 9, 7, 14, 1, 20, 21, 5, 0 };
-        protected readonly int signatureLength = 20;
+        readonly byte[] signature = new byte[20] { 13, 25, 0, 19, 20, 18, 1, 14, 7, 5, 0, 19, 9, 7, 14, 1, 20, 21, 5, 0 };
+        readonly int signatureLength = 20;
 
-        //the next 4 bytes will tell how many extra bytes have been added (2^(8+8+8+8) = enough)
-        protected const int byteLengthData = 4;
+        //the next 4 bytes will tell how many extra bytes have been added (2^(8+8+8+8) ~= 34GB (i think its enough))
+        const int byteLengthData = 4;
 
         // improve performance
         readonly long[] exponentsOfTwo = new long[] { 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144, 524288, 1048576, 2097152, 4194304, 8388608, 16777216, 33554432, 67108864, 134217728, 268435456, 536870912, 1073741824, 2147483648 };
 
-        public FileStream CreateFile(string dirPath, string fileName, string extension)
+        public StrangeDataSaver() { }
+        public StrangeDataSaver(byte[] customSignature)
         {
-            DirectoryInfo dir = new DirectoryInfo(dirPath);
-            if (!dir.Exists)
-                throw new DirectoryNotFoundException();
-
-            FileInfo file = new FileInfo($"{dirPath}/{fileName}.{extension}");
-            if (file.Exists)
-                throw new InvalidOperationException("Cant create an existing file");
-
-            return File.Create($"{dirPath}/{fileName}.{extension}");
+            signature = customSignature;
+            signatureLength = customSignature.Length;
         }
 
         #region Writes
 
-        /*public void AppendTestToStream(FileStream fs, string text)
+        /*public void AppendTesatToStream(FileStream fs, string text)
         {
             byte[] info = new UTF8Encoding(true).GetBytes(text);
         }*/

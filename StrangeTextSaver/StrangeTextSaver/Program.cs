@@ -9,6 +9,8 @@ namespace DataSaver
         //save text in a png/jpeg or other types of files
         static void Main(string[] args)
         {
+            double x = double.MaxValue;
+            int s = (int)x;
             string dirPath = @"D:/test";
 
             string filepath = $"{dirPath}/{"test"}.{"png"}";
