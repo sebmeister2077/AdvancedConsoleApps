@@ -29,10 +29,7 @@ namespace DataSaver
 
         #region Writes
 
-        /*public void AppendTesatToStream(FileStream fs, string text)
-        {
-            byte[] info = new UTF8Encoding(true).GetBytes(text);
-        }*/
+
 
         public void AppendBytesToFile(string filePath, byte[] data) => AppendBytesToFile(new FileInfo(filePath), data);
 
@@ -269,6 +266,11 @@ namespace DataSaver
                 bytes[i] = bits.Skip(i * 8).Take(8).ToArray().ToByte();
 
             return bytes;
+        }
+
+        public static byte[] ConvertToBytes(this string text)
+        {
+            return new UTF8Encoding(true).GetBytes(text);
         }
     }
 
