@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ namespace DataSaver
 {
     public static class DataConverter
     {
+        #region ToBits
         public static bool[] ToBits(this bool b) => new bool[8] { false, false, false, false, false, false, false, b };
 
         public static bool[] ToBits(this bool[] arr)
@@ -35,10 +37,15 @@ namespace DataSaver
 
             return result;
         }
+        #endregion
 
+
+        #region ToByte(s)
         public static byte ToByte(this bool[] bits)
         {
-            if (bits.Length % 8 != 0)
+            if (bits.Length > 8)
+                throw new ArgumentException("Cant convert more than 8 bits into 1 byte. Use ToBytes method for more flexibility");
+            if (bits.Length < 8)
                 bits = bits.ToBits();
 
             byte result = 0;
@@ -48,6 +55,27 @@ namespace DataSaver
 
             return result;
         }
+
+        public static byte[] ToBytes(this bool[] bits)
+        {
+            if (bits.Length % 8 != 0)
+                bits = bits.ToBits();
+
+            byte[] bytes = new byte[8];
+            int byteLength = bits.Length / 8;
+
+            for (int i = 0; i < byteLength; i++)
+            {
+                byte getByte = bits.Skip(i).Take(8).ToArray().ToByte();
+                bytes.Append(getByte);
+            }
+
+            return bytes;
+        }
+
+        public static byte ConvertToByte(this char c) => Convert.ToByte(c);
+
+        public static byte[] ConvertToBytes(this char[] arr) => arr.Select(Convert.ToByte).ToArray();
 
         public static byte[] ConvertToBytes(this int number) => number >= 0 ? ConvertToBytes(number) : new byte[0];
         public static byte[] ConvertToBytes(this uint number) => ConvertToBytes(number);
@@ -81,6 +109,16 @@ namespace DataSaver
         public static byte[] ConvertToBytes(this string text)
         {
             return new UTF8Encoding(true).GetBytes(text);
+        }
+
+        #endregion
+    }
+
+    public static class FileConverter
+    {
+        public static byte[] ConvertFile(string path) => ConvertFile(new FileInfo(path));
+        public static byte[] ConvertFile(FileInfo file)
+        {
         }
     }
 }
