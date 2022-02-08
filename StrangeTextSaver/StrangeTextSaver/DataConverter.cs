@@ -8,6 +8,16 @@ namespace DataSaver
 {
     public static class DataConverter
     {
+        public static bool[] ToBits(this bool b) => new bool[8] { false, false, false, false, false, false, false, b };
+
+        public static bool[] ToBits(this bool[] arr)
+        {
+            int offset = 8 - arr.Length % 8;
+            bool[] res = new bool[arr.Length + offset];
+            arr.CopyTo(res, offset);
+
+            return res;
+        }
         public static bool[] ToBits(this byte givenByte)
         {
             bool[] result = new bool[8];
@@ -28,6 +38,9 @@ namespace DataSaver
 
         public static byte ToByte(this bool[] bits)
         {
+            if (bits.Length % 8 != 0)
+                bits = bits.ToBits();
+
             byte result = 0;
             for (int i = 7; i >= 0; i--)
                 if (bits[i])
