@@ -12,7 +12,7 @@ namespace DataSaver
     /// You can add hidden data inside .png, .jpg, .jpeg, .gif, .mp4 files without changing anything visible.<br></br>
     /// Best you use your own special signature (recommend at least length of 15)
     /// </summary>
-    public class StrangeDataSaver
+    public class DataStream
     {
         //signature represents a file that has been written to with extra data
         //signature is always at the end
@@ -25,8 +25,8 @@ namespace DataSaver
         // improve performance
         readonly long[] exponentsOfTwo = new long[] { 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144, 524288, 1048576, 2097152, 4194304, 8388608, 16777216, 33554432, 67108864, 134217728, 268435456, 536870912, 1073741824, 2147483648 };
 
-        public StrangeDataSaver() { }
-        public StrangeDataSaver(byte[] customSignature)
+        public DataStream() { }
+        public DataStream(byte[] customSignature)
         {
             signature = customSignature;
             signatureLength = customSignature.Length;

@@ -11,7 +11,7 @@ namespace DataSaver
         {
             string filepath = $"D:/test/{"test"}.{"mp4"}";
 
-            StrangeDataSaver saver = new StrangeDataSaver();
+            DataStream saver = new DataStream();
             byte[] dat = new byte[1000000];
             dat.Initialize();
             for (int i = 0; i < 500; i++)
