@@ -105,11 +105,6 @@ namespace DataSaver
             readPosition -= totalWrittenBytes;
 
             reader.Position = readPosition;
-            while (totalWrittenBytes > int.MaxValue)
-            {
-                reader.Read(data, 0, int.MaxValue);
-                totalWrittenBytes -= int.MaxValue;
-            }
             reader.Read(data, 0, (int)totalWrittenBytes);
 
             return data;
