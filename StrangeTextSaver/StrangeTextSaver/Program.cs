@@ -6,22 +6,17 @@ namespace DataSaver
 {
     public class Program
     {
-        //save text in a png/jpeg or other types of files
+        //save text in a png/jpg/jpeg or other types of files
         static void Main(string[] args)
         {
-            string filepath = $"D:/test/{"testpng"}.{"png"}";
+            string filepath = $"D:/test/{"processed"}.{"jpeg"}";
 
             StrangeDataSaver saver = new StrangeDataSaver();
             byte[] dat = new byte[1000000];
             dat.Initialize();
 
+            saver.AppendBytesToFile(filepath, dat);
 
-            var info = new FileInfo(filepath);
-            FileStream fs = info.OpenRead();
-            byte[] data = new byte[fs.Length];
-            fs.Read(data, 0, data.Length);
-            //var r = saver.GetWrittenBytes(filepath);
-            int d = 0;
         }
     }
 

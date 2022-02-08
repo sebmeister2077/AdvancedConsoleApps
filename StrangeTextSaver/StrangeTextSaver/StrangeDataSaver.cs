@@ -9,7 +9,7 @@ namespace DataSaver
 {
 
     /// <summary>
-    /// You can add hidden data inside .png, .jpg  files
+    /// You can add hidden data inside .png, .jpg ,.jpeg files
     /// </summary>
     public class StrangeDataSaver
     {
