@@ -113,12 +113,4 @@ namespace DataSaver
 
         #endregion
     }
-
-    public static class FileConverter
-    {
-        public static byte[] ConvertFile(string path) => ConvertFile(new FileInfo(path));
-        public static byte[] ConvertFile(FileInfo file)
-        {
-        }
-    }
 }
