@@ -9,6 +9,9 @@ namespace DataSaver
 {
     public static class DataConverter
     {
+        static Random rand = new Random();
+
+
         #region ToBits
         public static bool[] ToBits(this bool b) => new bool[8] { false, false, false, false, false, false, false, b };
 
@@ -112,5 +115,27 @@ namespace DataSaver
         }
 
         #endregion
+
+        static byte[] GenerateBytes(long n)
+        {
+
+            byte[] arr = new byte[n];
+            for (int i = 0; i < n; i++)
+                arr[i] = (byte)rand.Next(256);
+
+            return arr;
+        }
+
+        static bool BytesEqual(byte[] a, byte[] b)
+        {
+            if (a.Length != b.Length)
+                return false;
+
+            for (int i = 0; i < a.Length; i++)
+                if (a[i] != b[i])
+                    return false;
+
+            return true;
+        }
     }
 }
